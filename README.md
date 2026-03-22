@@ -1,24 +1,59 @@
 # OpenCPT - Open Source Continuous Performance Test
 
-**A tool for measuring and tracking sustained attention over time**
+**Real-time computer vision and behavioral data pipeline for cognitive performance tracking**
 
 ## Overview
 
-There's growing concern that social media, short-form video, and constant digital stimulation may be affecting our ability to sustain attention. While OpenCPT cannot diagnose medical conditions, it provides a way to track your own focus abilities over time and observe how lifestyle changes might affect your concentration.
+OpenCPT is a machine learning-powered cognitive assessment platform that combines real-time computer vision, multi-level data aggregation, and longitudinal analytics to measure sustained attention and cognitive performance. The system integrates MediaPipe's face mesh detection models with a custom behavioral tracking pipeline to capture, process, and analyze cognitive performance data at scale.
 
-OpenCPT could be used to monitor your sustained attention abilities over weeks, months, or years. The longitudinal data can help you understand whether interventions like meditation, exercise, or reduced screen time are having measurable effects on your ability to focus.
+**Key Technical Features:**
+- **Real-time ML inference**: MediaPipe face mesh detection running at 30 FPS for behavioral tracking
+- **Multi-level data pipeline**: Frame-level (30 Hz) → Trial-level → Session-level aggregation with statistical feature engineering
+- **Time-series analysis**: Longitudinal tracking with correlation analysis across behavioral and performance metrics
+- **Scalable data architecture**: Hierarchical CSV storage optimized for both granular analysis and aggregate reporting
 
-## Design Philosophy
+The platform enables tracking of sustained attention abilities over weeks, months, or years, with rich behavioral telemetry that goes beyond simple response metrics to include eye tracking, head pose estimation, and fatigue detection.
 
-OpenCPT is based on the AX-CPT (Continuous Performance Test) paradigm, a research tool used in psychology and neuroscience to measure sustained attention, inhibitory control, and context maintenance. The AX-CPT variant requires participants to respond only in specific contexts (when X appears after A), testing both the ability to maintain focus and to inhibit automatic responses. This implementation follows established scientific protocols while remaining accessible for personal use.
+## Technology Stack
 
-As an open-source project, OpenCPT provides complete transparency in its methodology—anyone can audit the code, verify the approach, and contribute improvements.
+**Machine Learning & Computer Vision:**
+- **MediaPipe** (Google): 468-point face mesh detection for real-time facial landmark tracking
+- **OpenCV**: Image processing and camera I/O
+- **NumPy**: Numerical computing for feature engineering and statistical calculations
 
-All data is stored locally on your machine. There is no cloud synchronization, no telemetry, and no external data collection. You maintain complete ownership and control of your cognitive performance data, which can include sensitive behavioral information.
+**Data Processing & Analytics:**
+- **Pandas**: Data manipulation and time-series analysis
+- **Matplotlib/Seaborn**: Statistical visualization and plotting
+- **Jupyter**: Interactive data exploration and analysis notebooks
 
-The addition of optional webcam-based behavioral tracking extends measurement beyond simple button presses. By capturing blinks, head movement, and posture, OpenCPT can identify attention lapses, fatigue patterns, and restlessness that may not be apparent in response data alone. These objective behavioral markers provide richer insight into sustained attention performance.
+**Application Framework:**
+- **Pygame**: High-performance rendering and precise timing control
+- **Python 3.7+**: Core application logic
 
-The task is intentionally monotonous—watching letters appear for extended periods is not entertaining, but that is what effectively tests the ability to maintain focus when stimuli become repetitive.
+## Technical Architecture
+
+### Machine Learning Pipeline
+
+**Computer Vision Models:**
+- **MediaPipe Face Mesh**: 468-point facial landmark detection for real-time head pose estimation
+- **Eye Aspect Ratio (EAR)**: Custom blink detection algorithm using geometric eye landmark ratios
+- **3D Head Pose Estimation**: Pitch, yaw, roll calculation from facial landmarks with PnP solver
+
+**Data Engineering:**
+- **Multi-level aggregation pipeline**: Raw frame data (30 Hz) → Trial statistics → Session metrics
+- **Feature engineering**: Variance-based movement detection, temporal blink rate calculation, posture consistency scoring
+- **Streaming data processing**: Real-time frame capture with non-blocking I/O for minimal latency
+- **Hierarchical storage**: Optimized CSV structure for both high-frequency analysis and summary reporting
+
+### Scientific Foundation
+
+OpenCPT implements the AX-CPT (Continuous Performance Test) paradigm, a validated research tool used in cognitive neuroscience to measure sustained attention, inhibitory control, and context maintenance. The task requires participants to respond only in specific contexts (when X appears after A), testing both the ability to maintain focus and to inhibit automatic responses.
+
+The webcam-based behavioral tracking extends measurement beyond simple button presses. By capturing blinks, head movement, and posture through computer vision, the system identifies attention lapses, fatigue patterns, and restlessness that may not be apparent in response data alone. These objective behavioral markers provide richer insight into sustained attention performance.
+
+### Privacy & Data Ownership
+
+All data is stored locally on your machine. There is no cloud synchronization, no telemetry, and no external data collection. You maintain complete ownership and control of your cognitive performance data, which can include sensitive behavioral information. As an open-source project, OpenCPT provides complete transparency in its methodology—anyone can audit the code, verify the approach, and contribute improvements.
 
 ## Use Cases
 
@@ -27,7 +62,7 @@ The task is intentionally monotonous—watching letters appear for extended peri
 - **Research & Education**: Use in psychology courses, personal research projects, or cognitive studies
 - **Mindfulness practice**: Use as a focus training tool or meditation exercise
 
-## ⚠️ Important Disclaimers
+## Important Disclaimers
 
 - **NOT a medical diagnostic tool** - This is for personal experimentation and research only
 - **NOT validated for clinical use** - Do not use this to diagnose any medical or psychological condition
@@ -36,13 +71,25 @@ The task is intentionally monotonous—watching letters appear for extended peri
 
 ## Features
 
-- ✅ Scientifically-based task design (AX-CPT paradigm used in research)
-- ✅ Optional webcam-based behavioral tracking (blinks, head movement, posture)
-- ✅ Comprehensive data export (CSV format for analysis)
-- ✅ Jupyter notebook for visualization and analysis
-- ✅ Fully configurable (duration, difficulty, display settings)
-- ✅ Privacy-focused (all data stored locally)
-- ✅ Open source (modify and extend as you wish)
+**Machine Learning & Computer Vision:**
+- Real-time face mesh detection with MediaPipe (468 facial landmarks at 30 FPS)
+- Custom blink detection algorithm using Eye Aspect Ratio (EAR)
+- 3D head pose estimation (pitch, yaw, roll) with PnP solver
+- Automated fatigue detection through temporal blink rate analysis
+
+**Data Engineering & Analytics:**
+- Multi-level data aggregation pipeline (frame → trial → session)
+- Feature engineering: movement variance, posture consistency, attention metrics
+- Comprehensive data export (hierarchical CSV format optimized for analysis)
+- Jupyter notebook with pandas/matplotlib/seaborn for visualization and statistical analysis
+- Time-series correlation analysis for longitudinal tracking
+
+**System Design:**
+- Scientifically-based task design (AX-CPT paradigm used in cognitive research)
+- High-precision timing with frame-locked rendering (60 FPS)
+- Fully configurable parameters (duration, difficulty, display settings)
+- Privacy-focused architecture (all data stored locally, no telemetry)
+- Open source and extensible
 
 ## Task Description
 
@@ -65,7 +112,11 @@ The challenge lies in maintaining focus and context over hundreds of trials whil
 - Response accuracy (correct vs. incorrect responses)
 - Reaction times (response latency)
 - Error patterns (performance across different trial types)
-- Behavioral markers (blinks, head movement, posture changes - if webcam tracking enabled)
+- **ML-derived behavioral features** (if webcam tracking enabled):
+  - Blink count and temporal blink rate (fatigue indicator)
+  - 3D head position and movement variance (attention stability)
+  - Head pose angles (pitch, yaw, roll) for gaze estimation
+  - Posture consistency metrics across trials
 
 ## Getting Started
 
@@ -138,34 +189,49 @@ Edit `config.json` to customize task parameters:
 - `webcam_tracking.save_frame_data`: Save frame-by-frame tracking data (default: true)
 - `webcam_tracking.save_session_summary`: Save session-level summary (default: true)
 
-## Data Output
+## Data Pipeline & Output
+
+### Multi-Level Data Aggregation Architecture
+
+The system implements a hierarchical data pipeline that processes raw sensor data through multiple aggregation stages:
+
+**FRAME LEVEL** (Raw sensor data - 30 Hz sampling rate)
+- **Input**: MediaPipe face mesh detection output (468 landmarks per frame)
+- **Processing**: Eye Aspect Ratio calculation, 3D head pose estimation via PnP solver
+- **Output**: Timestamped feature vectors (head_x, head_y, head_z, pitch, yaw, roll, left_EAR, right_EAR, is_blinking)
+- **Volume**: ~1,800 frames per minute, ~36,000 frames per 20-minute session
+- **Use case**: High-frequency analysis, event detection, temporal pattern analysis
+
+**TRIAL LEVEL** (Aggregated statistics - per cue-probe pair)
+- **Input**: All frames within trial window (~1.2 seconds = ~36 frames)
+- **Feature Engineering**:
+  - Blink count and rate calculation
+  - Head movement variance (stability metric)
+  - Mean head distance from camera
+  - Looking-away detection (head yaw/pitch thresholds)
+- **Output**: Trial-level feature vector merged with behavioral response data
+- **Volume**: ~1,000 trials per 20-minute session
+- **Use case**: Trial-by-trial correlation analysis, error prediction
+
+**SESSION LEVEL** (Summary statistics - entire test run)
+- **Input**: All trial-level aggregates
+- **Feature Engineering**:
+  - Overall blink rate per minute
+  - Posture consistency score (inverse of position variance)
+  - Fatigue indicator (temporal trend in blink rate)
+  - Mean head movement across session
+- **Output**: Single-row summary with session-wide metrics
+- **Volume**: One record per session
+- **Use case**: Longitudinal tracking, session comparison, trend analysis
 
 Results are automatically saved to CSV files with timestamps in the `results/` directory.
 
-### Data Hierarchy
-
-**Understanding the three levels of data:**
-
-- **FRAME**: Single webcam capture (30 FPS by default)
-  - Contains: Head position, eye state at one moment in time
-  - Example: At 12.345 seconds, head was at position (0.5, 0.2, 2.8), eyes open
-
-- **TRIAL**: One cue-probe pair (duration depends on timing configuration)
-  - Contains: Aggregated metrics from all frames in that trial
-  - Example: During trial #42, participant blinked 3 times, head moved 0.15 units
-  - With default timing (50ms stimulus + 500ms response + 50ms ISI × 2), each trial pair takes ~1.2 seconds
-
-- **SESSION**: Complete test run (configurable duration)
-  - Contains: Overall statistics aggregated from all trials
-  - Example: Across entire session, average blink rate was 36/min, posture consistency 0.83
-  - Number of trials depends on session duration and timing parameters
-
-### Main Trial Data
+### Trial-Level Data (Behavioral + ML Features)
 File: `results/TIMESTAMP_DURATION/trial_data.csv`
 
-One row per trial (cue-probe pair). Number of rows depends on session duration and timing configuration.
+One row per trial (cue-probe pair). Combines behavioral responses with ML-derived features.
 
-**Behavioral Columns:**
+**Behavioral Response Features:**
 - `trial_index`: Trial number (one trial = one cue-probe pair)
 - `stimulus`: Letter shown (A, B, X, or Y)
 - `previous_stimulus`: Previous letter shown
@@ -175,45 +241,56 @@ One row per trial (cue-probe pair). Number of rows depends on session duration a
 - `reaction_time_ms`: Response time in milliseconds (empty if no response)
 - `stimulus_onset_timestamp`: High-precision timestamp of stimulus onset
 
-**Tracking Columns (if enabled, aggregated from all frames in the trial):**
-- `blink_count`: Number of blinks during this trial
-- `blink_rate`: Blinks per second during this trial
-- `mean_head_distance`: Average distance from camera during this trial
-- `head_movement_variance`: Head position variance during this trial (lower = more stable)
-- `looking_away_count`: Number of frames where head turned >30° away
-- `frames_tracked`: Number of frames successfully tracked in this trial
+**ML-Derived Tracking Features (aggregated from ~36 frames per trial):**
+- `blink_count`: Number of blinks detected during trial
+- `blink_rate`: Blinks per second (temporal feature)
+- `mean_head_distance`: Average z-coordinate from camera (depth estimation)
+- `head_movement_variance`: Variance in 3D head position (stability metric)
+- `looking_away_count`: Number of frames where head pose exceeded threshold (|yaw| > 30° or |pitch| > 30°)
+- `frames_tracked`: Number of frames with successful face detection (data quality metric)
 
-### Frame-Level Tracking Data (if enabled)
+### Frame-Level Raw Data (High-Frequency Sensor Stream)
 File: `results/TIMESTAMP_DURATION/tracking_frames.csv`
 
-High-frequency data (30 FPS by default, configurable) for detailed analysis. Each row = one webcam frame.
+Raw computer vision output at 30 Hz sampling rate. Each row represents one processed frame from the webcam.
 
-- `timestamp`: Frame timestamp
-- `trial_index`: Which trial this frame belongs to
-- `head_x`, `head_y`, `head_z`: Head position at this moment (z = distance from camera)
-- `head_pitch`, `head_yaw`, `head_roll`: Head orientation at this moment (degrees)
-- `left_eye_aspect_ratio`, `right_eye_aspect_ratio`: Eye openness at this moment (lower = more closed)
-- `is_blinking`: Whether eyes were closed at this moment
+**Temporal Features:**
+- `timestamp`: High-precision frame timestamp (seconds since session start)
+- `trial_index`: Foreign key linking to trial data
 
-### Session Summary (if enabled)
+**3D Head Pose Features (from MediaPipe face mesh + PnP solver):**
+- `head_x`, `head_y`, `head_z`: 3D head position in camera coordinate system (z = depth/distance)
+- `head_pitch`: Up/down rotation in degrees (nodding)
+- `head_yaw`: Left/right rotation in degrees (head turning)
+- `head_roll`: Tilt rotation in degrees (head tilting)
+
+**Eye Tracking Features (from facial landmark geometry):**
+- `left_eye_aspect_ratio`: Geometric ratio of eye height to width (lower = more closed)
+- `right_eye_aspect_ratio`: Geometric ratio of eye height to width (lower = more closed)
+- `is_blinking`: Binary classification (threshold-based on EAR < 0.2)
+
+### Session-Level Summary Statistics
 File: `results/TIMESTAMP_DURATION/tracking_session.csv`
 
-Aggregate metrics for the entire session. One row total, aggregated from all trials.
+Aggregate metrics computed across entire session. Single row containing session-wide statistics.
 
-- `total_blinks`: Total blinks across all trials
-- `total_frames_tracked`: Total frames processed
+**Volume Metrics:**
+- `total_blinks`: Sum of all detected blinks across session
+- `total_frames_tracked`: Total frames with successful face detection
 - `total_trials_tracked`: Number of trials with tracking data
-- `blink_rate_per_minute`: Average blinks per minute across entire session
-- `mean_head_movement`: Overall head movement across entire session (lower = more stable)
-- `posture_consistency`: Posture consistency metric (0-1, higher = better consistency)
-- `fatigue_indicator`: Change in blink rate over time (positive = increased fatigue)
 - `session_duration_seconds`: Total tracking duration
 
-## Analyzing Results
+**Engineered Performance Metrics:**
+- `blink_rate_per_minute`: Mean blink frequency (normalized to per-minute rate)
+- `mean_head_movement`: Average 3D position variance across session (stability indicator)
+- `posture_consistency`: Inverse variance metric (0-1 scale, higher = more consistent posture)
+- `fatigue_indicator`: Linear regression slope of blink rate over time (positive = increasing fatigue)
 
-### Jupyter Notebook Analysis
+## Data Analysis & Visualization
 
-A comprehensive Jupyter notebook is provided for analyzing your results:
+### Jupyter Notebook Analytics Pipeline
+
+A comprehensive Jupyter notebook (`analyze_axcpt_results.ipynb`) provides end-to-end data analysis using pandas, matplotlib, and seaborn:
 
 ```bash
 # Install analysis dependencies (if not already installed)
@@ -223,14 +300,35 @@ pip install pandas matplotlib seaborn jupyter
 jupyter notebook analyze_axcpt_results.ipynb
 ```
 
-The notebook includes:
-- **Behavioral Performance Analysis**: Accuracy, reaction times, error patterns
-- **Tracking Data Visualization**: Blink rates, head movement, engagement metrics
-- **Combined Analysis**: Correlation between attention and performance
-- **Trial-by-Trial Deep Dive**: Detailed inspection of individual trials
-- **Professional Visualizations**: Publication-ready charts and graphs
+**Analysis Modules:**
 
-The notebook automatically loads the most recent session data from the `results/` folder.
+1. **Data Loading & Preprocessing**
+   - Automated CSV ingestion from hierarchical storage
+   - Data validation and quality checks
+   - Missing data handling and interpolation
+
+2. **Behavioral Performance Analysis**
+   - Accuracy metrics by trial type (AX, BX, AY, BY)
+   - Reaction time distribution analysis
+   - Error pattern classification and visualization
+
+3. **ML Feature Analysis**
+   - Time-series visualization of blink rates and head movement
+   - Correlation matrices between behavioral and CV-derived features
+   - Fatigue detection through temporal trend analysis
+
+4. **Combined Multi-Modal Analysis**
+   - Correlation between attention metrics (blinks, head pose) and performance (accuracy, RT)
+   - Predictive modeling: Can behavioral features predict errors?
+   - Trial-by-trial deep dive with synchronized behavioral and tracking data
+
+5. **Statistical Visualization**
+   - Distribution plots, box plots, violin plots for metric comparison
+   - Time-series plots with trend lines and confidence intervals
+   - Heatmaps for correlation analysis
+   - Publication-ready figures with customizable styling
+
+The notebook automatically loads the most recent session data from the `results/` folder and provides interactive exploration of all three data levels (frame, trial, session).
 
 ## Understanding Your Results
 
@@ -266,31 +364,45 @@ Single sessions contain considerable noise—performance can vary due to numerou
 - **No telemetry**: The application doesn't phone home or track usage
 - **No account required**: No sign-up, no tracking, no data collection
 
-## Webcam Tracking Features
+## Computer Vision Tracking System
 
-The task now includes **optional webcam-based behavioral tracking** using MediaPipe for real-time face and eye detection.
+### Real-Time ML Inference Pipeline
 
-### What's Tracked (Tier 1 - Currently Implemented)
+The system implements **optional webcam-based behavioral tracking** using Google's MediaPipe framework for real-time face mesh detection and feature extraction.
 
-**Blink Detection:**
-- Automatic blink detection using Eye Aspect Ratio (EAR)
-- Blink count and rate per trial
-- Can identify fatigue patterns over time
+**Architecture:**
+- **Model**: MediaPipe Face Mesh (468 facial landmarks)
+- **Inference Rate**: 30 FPS on CPU (optimized for real-time performance)
+- **Processing**: Non-blocking frame capture with threaded I/O
+- **Latency**: <33ms per frame (suitable for real-time behavioral monitoring)
 
-**Head Pose Tracking:**
-- 3D head position (X, Y, Z coordinates)
-- Head orientation (pitch, yaw, roll in degrees)
-- Head movement stability/variance
-- Detection of looking away from screen
+### Implemented Features (Tier 1)
 
-### Research Applications
+**Blink Detection Algorithm:**
+- **Method**: Eye Aspect Ratio (EAR) calculation from eye landmark geometry
+- **Formula**: EAR = (||p2-p6|| + ||p3-p5||) / (2 * ||p1-p4||) where p1-p6 are eye landmarks
+- **Threshold**: EAR < 0.2 classified as blink
+- **Output**: Binary blink state + temporal blink rate calculation
+- **Application**: Fatigue detection through temporal trend analysis
 
-This data enables analysis of:
-- **Attention lapses**: Correlation between looking away and missed targets
-- **Fatigue**: Increased blink rate over time
-- **Posture Consistency**: Head movement and posture changes
-- **Restlessness**: Head movement patterns during sustained attention tasks
-- **Error prediction**: Behavioral markers before incorrect responses
+**3D Head Pose Estimation:**
+- **Method**: Perspective-n-Point (PnP) solver using facial landmarks
+- **Output**:
+  - 3D position (X, Y, Z) in camera coordinate system
+  - Euler angles (pitch, yaw, roll) in degrees
+- **Derived Metrics**:
+  - Movement variance (attention stability indicator)
+  - Looking-away detection (|yaw| > 30° or |pitch| > 30°)
+  - Posture consistency scoring
+
+### Research & ML Applications
+
+The multi-modal dataset enables:
+- **Attention Lapse Detection**: Correlation analysis between head pose and missed targets
+- **Fatigue Modeling**: Time-series analysis of blink rate trends
+- **Error Prediction**: ML models using behavioral features to predict response errors
+- **Posture Analysis**: Clustering analysis of head movement patterns
+- **Multi-Modal Fusion**: Combining CV features with behavioral responses for richer insights
 
 ### Testing Tracking
 
@@ -310,15 +422,23 @@ To run the task without webcam tracking, set in `config.json`:
 }
 ```
 
-### Future Enhancements (Tier 2/3)
+### Extensible Architecture (Tier 2/3 Features)
 
-The architecture is designed to easily add:
-- **Blink duration**: Measure how long each blink lasts (longer blinks may indicate fatigue)
-- **PERCLOS (Percentage of Eye Closure)**: Percentage of time eyes are >80% closed (drowsiness indicator)
-- **Gaze tracking**: Where on screen the participant is looking
-- **Pupil dilation**: Cognitive load and arousal measurement
-- **Facial expressions**: Emotion detection (frustration, boredom)
-- **Advanced attention metrics**: Fixation stability, saccade detection
+The modular pipeline design supports easy integration of additional ML models:
+
+**Planned Computer Vision Features:**
+- **Blink Duration Analysis**: Temporal blink length measurement (fatigue indicator)
+- **PERCLOS (Percentage of Eye Closure)**: Drowsiness detection metric (% time eyes >80% closed)
+- **Gaze Tracking**: Screen-space gaze estimation from eye landmarks
+- **Pupillometry**: Pupil diameter tracking for cognitive load measurement
+- **Facial Action Coding**: Emotion detection (frustration, boredom) via facial expression recognition
+- **Advanced Eye Tracking**: Fixation stability, saccade detection, smooth pursuit analysis
+
+**Data Engineering Enhancements:**
+- **Real-time streaming**: Kafka/Redis integration for live data streaming
+- **Database backend**: PostgreSQL/TimescaleDB for time-series optimization
+- **Feature store**: Centralized feature repository for ML model training
+- **Automated ML pipeline**: Model training and evaluation on longitudinal data
 
 ## Project Structure
 
@@ -350,13 +470,24 @@ The architecture is designed to easily add:
           └── summary.txt        # Human-readable summary report
 ```
 
-## Technical Notes
+## Technical Implementation Details
 
-- The task uses high-precision timing (`time.perf_counter()`)
-- Frame-locked rendering at 60 FPS
-- No feedback is provided during trials
-- First trial cannot be AX (no prior context)
-- Trial sequences are randomized while maintaining target probability
+**Performance Optimization:**
+- High-precision timing using `time.perf_counter()` for microsecond-level accuracy
+- Frame-locked rendering at 60 FPS with V-sync
+- Non-blocking webcam capture with threaded I/O (prevents frame drops)
+- Efficient CSV writing with buffered I/O
+
+**Data Quality:**
+- Timestamp synchronization between behavioral and tracking data
+- Frame-level quality metrics (successful face detection rate)
+- Missing data handling in aggregation pipeline
+
+**Task Design:**
+- No feedback provided during trials (prevents learning effects)
+- First trial cannot be AX (requires prior context)
+- Randomized trial sequences while maintaining target probability distribution
+- Configurable timing parameters for different difficulty levels
 
 ## Contributing
 

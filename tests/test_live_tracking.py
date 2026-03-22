@@ -79,7 +79,7 @@ def test_live_tracking():
                     # Clear display area, print event, will redraw display next
                     if first_display_shown:
                         clear_lines(13)
-                    print(f"[{time.strftime('%H:%M:%S')}] 🔴 BLINK #{blink_count} detected!")
+                    print(f"[{time.strftime('%H:%M:%S')}] BLINK #{blink_count} detected!")
                     print()  # Blank line for separation
                     first_display_shown = False  # Force redraw
                 
@@ -91,7 +91,7 @@ def test_live_tracking():
                     looking_away_count += 1
                     if first_display_shown:
                         clear_lines(13)
-                    print(f"[{time.strftime('%H:%M:%S')}] ⚠️  LOOKING AWAY #{looking_away_count} - Yaw: {frame_metrics.head_yaw:.1f}°, Pitch: {frame_metrics.head_pitch:.1f}°")
+                    print(f"[{time.strftime('%H:%M:%S')}] LOOKING AWAY #{looking_away_count} - Yaw: {frame_metrics.head_yaw:.1f}°, Pitch: {frame_metrics.head_pitch:.1f}°")
                     print()
                     first_display_shown = False
                 
@@ -102,14 +102,14 @@ def test_live_tracking():
                 if yaw_change > 15 and frame_count > 30:  # Skip initial frames
                     if first_display_shown:
                         clear_lines(13)
-                    print(f"[{time.strftime('%H:%M:%S')}] ↔️  Large yaw movement: {frame_metrics.head_yaw:.1f}° (Δ{yaw_change:.1f}°)")
+                    print(f"[{time.strftime('%H:%M:%S')}] Large yaw movement: {frame_metrics.head_yaw:.1f}° (Δ{yaw_change:.1f}°)")
                     print()
                     first_display_shown = False
-                
+
                 if pitch_change > 15 and frame_count > 30:
                     if first_display_shown:
                         clear_lines(13)
-                    print(f"[{time.strftime('%H:%M:%S')}] ↕️  Large pitch movement: {frame_metrics.head_pitch:.1f}° (Δ{pitch_change:.1f}°)")
+                    print(f"[{time.strftime('%H:%M:%S')}] Large pitch movement: {frame_metrics.head_pitch:.1f}° (Δ{pitch_change:.1f}°)")
                     print()
                     first_display_shown = False
                 
@@ -132,8 +132,8 @@ def test_live_tracking():
                     print(f"{'Frames Processed':<30} {frame_count:<20}")
                     print(f"{'Blinks Detected':<30} {blink_count:<20}")
                     print(f"{'Looking Away Events':<30} {looking_away_count:<20}")
-                    print(f"{'Currently Blinking':<30} {'YES' if frame_metrics.is_blinking else 'NO':<20} {'🔴' if frame_metrics.is_blinking else '✓'}")
-                    print(f"{'Currently Looking Away':<30} {'YES' if looking_away else 'NO':<20} {'⚠️ ' if looking_away else '✓'}")
+                    print(f"{'Currently Blinking':<30} {'YES' if frame_metrics.is_blinking else 'NO':<20} {'[BLINK]' if frame_metrics.is_blinking else '[OK]'}")
+                    print(f"{'Currently Looking Away':<30} {'YES' if looking_away else 'NO':<20} {'[AWAY]' if looking_away else '[OK]'}")
                     print(f"{'Head Distance (Z)':<30} {frame_metrics.head_z:<20.2f}")
                     print(f"{'Head Yaw (L/R)':<30} {frame_metrics.head_yaw:<20.1f}°")
                     print(f"{'Head Pitch (U/D)':<30} {frame_metrics.head_pitch:<20.1f}°")
